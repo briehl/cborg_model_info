@@ -6,6 +6,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
+  "homepage": "https://briehl.github.io/cborg_model_info",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
