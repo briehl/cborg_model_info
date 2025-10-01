@@ -1,4 +1,3 @@
-import React from 'react';
 import './ModelCard.css';
 
 const ModelCard = ({ model, onClick }) => {

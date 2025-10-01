@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import './App.css';
 import ModelCard from './components/ModelCard';
 import SearchFilter from './components/SearchFilter';

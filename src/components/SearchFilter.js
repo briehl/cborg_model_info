@@ -1,4 +1,3 @@
-import React from 'react';
 import './SearchFilter.css';
 
 const SearchFilter = ({ searchTerm, setSearchTerm, filterCapability, setFilterCapability }) => {
