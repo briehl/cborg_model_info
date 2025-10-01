@@ -32,19 +32,22 @@
   color: #999;
 }
 
-.filter-options {
+.filter-options,
+.sort-options {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.filter-options label {
+.filter-options label,
+.sort-options label {
   font-weight: 500;
   color: #555;
   white-space: nowrap;
 }
 
-.filter-select {
+.filter-select,
+.sort-select {
   padding: 10px 15px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
@@ -55,7 +58,8 @@
   transition: border-color 0.3s;
 }
 
-.filter-select:focus {
+.filter-select:focus,
+.sort-select:focus {
   border-color: #4CAF50;
 }
 
@@ -84,7 +88,8 @@
     min-width: 100%;
   }
 
-  .filter-options {
+  .filter-options,
+  .sort-options {
     width: 100%;
     justify-content: space-between;
   }

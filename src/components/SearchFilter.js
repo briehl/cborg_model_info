@@ -1,6 +1,6 @@
 import './SearchFilter.css';
 
-const SearchFilter = ({ searchTerm, setSearchTerm, filterCapability, setFilterCapability }) => {
+const SearchFilter = ({ searchTerm, setSearchTerm, filterCapability, setFilterCapability, sortBy, setSortBy }) => {
   return (
     <div className="search-filter-container">
       <div className="search-box">
@@ -26,6 +26,21 @@ const SearchFilter = ({ searchTerm, setSearchTerm, filterCapability, setFilterCa
           <option value="vision">Vision</option>
           <option value="audio">Audio</option>
           <option value="reasoning">Reasoning</option>
+        </select>
+      </div>
+
+      <div className="sort-options">
+        <label htmlFor="sort-select">Sort by:</label>
+        <select
+          id="sort-select"
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="sort-select"
+        >
+          <option value="name-asc">Name (A-Z)</option>
+          <option value="name-desc">Name (Z-A)</option>
+          <option value="cost-asc">Cost (Low to High)</option>
+          <option value="cost-desc">Cost (High to Low)</option>
         </select>
       </div>
 

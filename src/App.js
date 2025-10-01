@@ -14,6 +14,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedModel, setSelectedModel] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [sortBy, setSortBy] = useState('name-asc');
 
   const fetchModels = async () => {
     if (!apiKey) {
@@ -100,8 +101,34 @@ function App() {
       });
     }
 
-    return filtered;
-  }, [models, searchTerm, filterCapability]);
+    // Apply sorting
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case 'name-asc':
+          return (a.model_name || '').localeCompare(b.model_name || '');
+        case 'name-desc':
+          return (b.model_name || '').localeCompare(a.model_name || '');
+        case 'cost-asc': {
+          const costA = (a.model_info?.input_cost_per_token || a.litellm_params?.input_cost_per_token || 0) +
+                       (a.model_info?.output_cost_per_token || a.litellm_params?.output_cost_per_token || 0);
+          const costB = (b.model_info?.input_cost_per_token || b.litellm_params?.input_cost_per_token || 0) +
+                       (b.model_info?.output_cost_per_token || b.litellm_params?.output_cost_per_token || 0);
+          return costA - costB;
+        }
+        case 'cost-desc': {
+          const costA = (a.model_info?.input_cost_per_token || a.litellm_params?.input_cost_per_token || 0) +
+                       (a.model_info?.output_cost_per_token || a.litellm_params?.output_cost_per_token || 0);
+          const costB = (b.model_info?.input_cost_per_token || b.litellm_params?.input_cost_per_token || 0) +
+                       (b.model_info?.output_cost_per_token || b.litellm_params?.output_cost_per_token || 0);
+          return costB - costA;
+        }
+        default:
+          return 0;
+      }
+    });
+
+    return sorted;
+  }, [models, searchTerm, filterCapability, sortBy]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -164,6 +191,8 @@ function App() {
         setSearchTerm={setSearchTerm}
         filterCapability={filterCapability}
         setFilterCapability={setFilterCapability}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
       />
 
       {loading && <div className="loading">Loading models...</div>}
