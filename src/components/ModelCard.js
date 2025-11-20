@@ -49,6 +49,13 @@ const ModelCard = ({ model, onClick }) => {
     return 'LLM Model';
   };
 
+  const getKey = () => {
+    if (modelInfo.key) {
+      return `Key: ${modelInfo.key}`;
+    }
+    return '';
+  }
+
   const getMaxTokens = () => {
     const maxTokens = modelInfo.max_tokens || modelInfo.max_output_tokens;
     const maxInput = modelInfo.max_input_tokens;
@@ -71,6 +78,7 @@ const ModelCard = ({ model, onClick }) => {
       </div>
 
       <div className="model-description">
+        <p><strong>{getKey()}</strong></p>
         <p>{getDescription()}</p>
       </div>
 

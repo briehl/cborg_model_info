@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import './App.css';
 import ModelCard from './components/ModelCard';
 import SearchFilter from './components/SearchFilter';
 import Modal from './components/Modal';
 
 function App() {
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey, setApiKeyState] = useState('');
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -16,7 +16,27 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortBy, setSortBy] = useState('name-asc');
 
-  const fetchModels = async () => {
+  const apiKeyInputRef = useRef(null);
+
+  // Wrapper function to save API key to localStorage
+  const setApiKey = (key) => {
+    setApiKeyState(key);
+    if (key) {
+      localStorage.setItem('cborgApiKey', key);
+    } else {
+      localStorage.removeItem('cborgApiKey');
+    }
+  };
+
+  // Load API key from localStorage on app mount
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem('cborgApiKey');
+    if (savedApiKey) {
+      setApiKeyState(savedApiKey);
+    }
+  }, []);
+
+  const fetchModels = useCallback(async () => {
     if (!apiKey) {
       setError('Please enter an API key');
       return;
@@ -53,7 +73,14 @@ function App() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [apiKey]);
+
+  // Fetch models when API key is loaded from localStorage
+  useEffect(() => {
+    if (apiKey && !isAuthenticated) {
+      fetchModels();
+    }
+  }, [apiKey, fetchModels, isAuthenticated]);
 
   const filterDuplicates = (modelList) => {
     const uniqueMap = new Map();
@@ -132,7 +159,8 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetchModels();
+    const keyFromInput = apiKeyInputRef.current.value;
+    setApiKey(keyFromInput);
   };
 
   const handleModelClick = (model) => {
@@ -145,7 +173,7 @@ function App() {
     setSelectedModel(null);
   };
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !apiKey) {
     return (
       <div className="app">
         <div className="auth-container">
@@ -153,10 +181,10 @@ function App() {
           <form onSubmit={handleSubmit} className="auth-form">
             <label htmlFor="api-key">Enter your CBORG API Key:</label>
             <input
+              ref={apiKeyInputRef}
               id="api-key"
               type="password"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
+              defaultValue={apiKey}
               placeholder="Your API key"
               required
             />
@@ -177,7 +205,8 @@ function App() {
         <button
           className="logout-btn"
           onClick={() => {
-            setApiKey('');
+            localStorage.removeItem('cborgApiKey');
+            setApiKeyState('');
             setModels([]);
             setIsAuthenticated(false);
           }}
