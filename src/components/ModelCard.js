@@ -20,11 +20,21 @@ const ModelCard = ({ model, onClick }) => {
   };
 
   const formatCost = (inputCost, outputCost) => {
-    const input = inputCost || modelInfo.input_cost_per_token || litellmParams.input_cost_per_token || 0;
-    const output = outputCost || modelInfo.output_cost_per_token || litellmParams.output_cost_per_token || 0;
+    const input = Number(inputCost || modelInfo.input_cost_per_token || litellmParams.input_cost_per_token || 0);
+    const output = Number(outputCost || modelInfo.output_cost_per_token || litellmParams.output_cost_per_token || 0);
 
-    if (input === 0 && output === 0) return 'Free';
-    return `Input: $${input.toFixed(6)*1000000} / Output: $${output.toFixed(6)*1000000}`;
+    if (input === 0 && output === 0) {
+      return 'Free';
+    }
+    let inputText = 'Unknown';
+    let outputText = 'Unknown';
+    if (!isNaN(input)) {
+      inputText = input.toFixed(6)*1000000;
+    }
+    if (!isNaN(output)) {
+      outputText = output.toFixed(6)*1000000;
+    }
+    return `Input: $${inputText} / Output: $${outputText}`;
   };
 
   const hasToolUsage = () => {
@@ -76,7 +86,7 @@ const ModelCard = ({ model, onClick }) => {
         </div>
 
         <div className="detail-item">
-          <strong>Cost per 10^6 Tokens:</strong>
+          <strong>Cost per 10<sup>6</sup> Tokens:</strong>
           <span>{formatCost()}</span>
         </div>
       </div>
