@@ -15,6 +15,7 @@ function App() {
   const [selectedModel, setSelectedModel] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortBy, setSortBy] = useState('name-asc');
+  const [keyInfo, setKeyInfo] = useState({ maxBudget: null, spend: null });
 
   const apiKeyInputRef = useRef(null);
 
@@ -81,6 +82,36 @@ function App() {
       fetchModels();
     }
   }, [apiKey, fetchModels, isAuthenticated]);
+
+  const fetchKeyInfo = useCallback(async (key) => {
+    try {
+      const response = await fetch('https://api.cborg.lbl.gov/key/info', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${key}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) return;
+
+      const resp = await response.json();
+      const maxBudget = resp?.info?.max_budget ?? null;
+      const spend = resp?.info?.spend ?? null;
+      setKeyInfo({ maxBudget, spend });
+    } catch {
+      // Non-fatal: silently ignore if key info fetch fails
+    }
+  }, []);
+
+  // Fetch key info whenever the user authenticates or changes their API key
+  useEffect(() => {
+    if (isAuthenticated && apiKey) {
+      fetchKeyInfo(apiKey);
+    } else {
+      setKeyInfo({ maxBudget: null, spend: null });
+    }
+  }, [isAuthenticated, apiKey, fetchKeyInfo]);
 
   const filterDuplicates = (modelList) => {
     const uniqueMap = new Map();
@@ -202,6 +233,17 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>LLM Model Cards</h1>
+        {keyInfo.maxBudget !== null && (
+          <div className="key-credits">
+            <span className="key-credits-label">Credits</span>
+            <span className="key-credits-value">
+              ${(keyInfo.maxBudget - keyInfo.spend).toFixed(4)} remaining
+            </span>
+            <span className="key-credits-total">
+              of ${keyInfo.maxBudget.toFixed(4)} total
+            </span>
+          </div>
+        )}
         <button
           className="logout-btn"
           onClick={() => {
