@@ -233,15 +233,23 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>LLM Model Cards</h1>
-        {keyInfo.maxBudget !== null && (
+        {keyInfo.spend !== null && (
           <div className="key-credits">
             <span className="key-credits-label">Credits</span>
-            <span className="key-credits-value">
-              ${(keyInfo.maxBudget - keyInfo.spend).toFixed(4)} remaining
-            </span>
-            <span className="key-credits-total">
-              of ${keyInfo.maxBudget.toFixed(4)} total
-            </span>
+            {keyInfo.maxBudget !== null ? (
+              <>
+                <span className="key-credits-value">
+                  ${(keyInfo.maxBudget - keyInfo.spend).toFixed(2)} remaining
+                </span>
+                <span className="key-credits-total">
+                  of ${keyInfo.maxBudget.toFixed(2)} total
+                </span>
+              </>
+            ) : (
+              <span className="key-credits-value">
+                ${keyInfo.spend.toFixed(2)} spent
+              </span>
+            )}
           </div>
         )}
         <button
