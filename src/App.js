@@ -16,6 +16,8 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortBy, setSortBy] = useState('name-asc');
   const [keyInfo, setKeyInfo] = useState({ maxBudget: null, spend: null });
+  const [keyInfoRaw, setKeyInfoRaw] = useState(null);
+  const [keyInfoModalOpen, setKeyInfoModalOpen] = useState(false);
 
   const apiKeyInputRef = useRef(null);
 
@@ -99,6 +101,7 @@ function App() {
       const maxBudget = resp?.info?.max_budget ?? null;
       const spend = resp?.info?.spend ?? null;
       setKeyInfo({ maxBudget, spend });
+      setKeyInfoRaw(resp);
     } catch {
       // Non-fatal: silently ignore if key info fetch fails
     }
@@ -110,6 +113,7 @@ function App() {
       fetchKeyInfo(apiKey);
     } else {
       setKeyInfo({ maxBudget: null, spend: null });
+      setKeyInfoRaw(null);
     }
   }, [isAuthenticated, apiKey, fetchKeyInfo]);
 
@@ -234,7 +238,7 @@ function App() {
       <header className="app-header">
         <h1>LLM Model Cards</h1>
         {keyInfo.spend !== null && (
-          <div className="key-credits">
+          <div className="key-credits" onClick={() => setKeyInfoModalOpen(true)}>
             <span className="key-credits-label">Credits</span>
             {keyInfo.maxBudget !== null ? (
               <>
@@ -295,6 +299,12 @@ function App() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         modelData={selectedModel}
+      />
+      <Modal
+        isOpen={keyInfoModalOpen}
+        onClose={() => setKeyInfoModalOpen(false)}
+        modelData={keyInfoRaw}
+        title="API Key Info"
       />
     </div>
   );

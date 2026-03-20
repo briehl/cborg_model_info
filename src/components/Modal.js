@@ -1,6 +1,6 @@
 import './Modal.css';
 
-const Modal = ({ isOpen, onClose, modelData }) => {
+const Modal = ({ isOpen, onClose, modelData, title }) => {
   if (!isOpen) return null;
 
   const handleBackdropClick = (e) => {
@@ -13,7 +13,7 @@ const Modal = ({ isOpen, onClose, modelData }) => {
     <div className="modal-backdrop" onClick={handleBackdropClick}>
       <div className="modal-content">
         <div className="modal-header">
-          <h2>{modelData?.model_name || 'Model Details'}</h2>
+          <h2>{title || modelData?.model_name || 'Model Details'}</h2>
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
         <div className="modal-body">
